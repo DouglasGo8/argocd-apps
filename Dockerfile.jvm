@@ -1,0 +1,85 @@
+# --- Build Stage ---
+# Using JDK 25 (LTS) tag
+FROM --platform=$BUILDPLATFORM maven:3.9.12-eclipse-temurin-25-alpine AS build
+
+ARG APP_NAME
+ARG TARGETPLATFORM
+ARG BUILDPLATFORM
+
+WORKDIR /app
+
+COPY . .
+
+# Download dependencies (Cache Mount)
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -q -ntp -B -pl ${APP_NAME} -am dependency:go-offline
+
+# Build (Cache Mount)
+RUN --mount=type=cache,target=/root/.m2 \
+    mvn -q -ntp -B -pl ${APP_NAME} -DskipTests -am package && \
+    ls -lh ${APP_NAME}/target/*.jar
+
+# --- Runtime Stage ---
+# Using JRE 25 (LTS)
+FROM eclipse-temurin:25-jre-alpine
+
+ARG APP_NAME
+ARG APP_PORT=8080
+ARG APP_VERSION=1.0.0
+ARG DESCRIPTION="Vert.x 5 on Java 25"
+
+LABEL maintainer="douglasdb" \
+      version="${APP_VERSION}" \
+      description="${DESCRIPTION}"
+
+# Environment variables setup
+# Using HTTP_PORT as the single source of truth for the port
+ENV HTTP_PORT=${APP_PORT} \
+    HTTP_HOST=0.0.0.0 \
+    DB_HOST=localhost \
+    DB_PORT=5432 \
+    DB_NAME=userdb \
+    DB_USER=postgres \
+    DB_PASSWORD=postgres \
+    DB_POOL_MAX=10 \
+    DB_POOL_IDLE_TIMEOUT=600000 \
+    JAVA_OPTS="" \
+    MALLOC_ARENA_MAX=2
+
+# Install basic utilities (Alpine)
+RUN apk add --no-cache \
+    dumb-init \
+    curl \
+    && addgroup -g 1000 vertx \
+    && adduser -D -s /bin/sh -u 1000 -G vertx vertx \
+    && mkdir -p /app \
+    && chown -R vertx:vertx /app
+
+WORKDIR /app
+
+# Copy the JAR
+COPY --from=build --chown=vertx:vertx /app/${APP_NAME}/target/*.jar app.jar
+
+USER vertx
+
+# Healthcheck adjusted to use ${HTTP_PORT}
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://localhost:${HTTP_PORT}/api/irsa/health || exit 1
+
+EXPOSE ${HTTP_PORT}
+
+ENTRYPOINT ["dumb-init", "--"]
+
+# JAVA 25 OPTIMIZED EXECUTION COMMAND
+CMD ["sh", "-c", "exec java \
+    -XX:+UseContainerSupport \
+    -XX:MaxRAMPercentage=75.0 \
+    -XX:InitialRAMPercentage=50.0 \
+    -XX:+UseZGC \
+    -XX:+UseStringDeduplication \
+    -XX:+OptimizeStringConcat \
+    -XX:+TieredCompilation \
+    -Dvertx.disableDnsResolver=true \
+    -Djava.security.egd=file:/dev/./urandom \
+    ${JAVA_OPTS} \
+    -jar app.jar"]
