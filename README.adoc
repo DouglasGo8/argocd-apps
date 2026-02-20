@@ -139,3 +139,10 @@ docker tag my-app douglasdb/my-app
 docker push douglasdb/my-app
 ----
 
+.my-app ArgoCD Sync
+image::./thumbs/argocd_screen_monitor_v1.png[,]
+
+.Application Service Manifest exposed
+image::./thumbs/my-app-svc-exposed.png[,]
+
+Sync status: refers to whether the live state, or the deployed *kubernetes* resources, match the desired state, or the configuration files in the application repo

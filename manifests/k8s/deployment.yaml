@@ -14,7 +14,7 @@ spec:
         app: my-app
     spec:
       containers:
-        - image: douglasdb/my-app:latest
+        - image: douglasdb/my-app
           name: myapp
           ports:
             - containerPort: 8080

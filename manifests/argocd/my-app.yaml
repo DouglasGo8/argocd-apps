@@ -11,4 +11,8 @@ spec:
     path: manifests/k8s
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: k8sinaction
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
