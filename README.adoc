@@ -3,6 +3,7 @@
 == Links
 
 - https://github.com/lm-academy/argo-rollouts-course[Git Source]
+- https://github.com/lm-academy/argocd-example-apps[Git Samples Source]
 
 .Minikube conf initial setup
 [source,bash]
@@ -102,11 +103,14 @@ image::./thumbs/argocd_arch_v4.png[,]
 * The purpose of Application CRD is to be a declarative contract that describe several important pieces of information for ArgoCD to do its job
 
 ** *Project*: Under which ArgoCD project should the app be manged?
-** *Source*: (spec.source) - _WHERE_ is the desired state defined? This normally includes a Git Repo URL, a branch, and a path or Helm Chart
-** *Destination*: (spec.destination): _WHERE_ should the manifests from that source be deployed? More specifically, which cluster and namespace?
-** *(Optional) Sync Policy*: (spec.syncPolicy): _HOW_ should the deployment be managed? Should it be automated, prune resources, shelf-heal, etc?
+** *Source*: (spec.source) - _WHERE_ is the desired state defined?
+This normally includes a Git Repo URL, a branch, and a path or Helm Chart
+** *Destination*: (spec.destination): _WHERE_ should the manifests from that source be deployed?
+More specifically, which cluster and namespace?
+** *(Optional) Sync Policy*: (spec.syncPolicy): _HOW_ should the deployment be managed?
+Should it be automated, prune resources, shelf-heal, etc?
 
-[source, yaml]
+[source,yaml]
 ----
 apiVersion: argopro.io/v1alpha1
 kind: Application
@@ -128,7 +132,7 @@ spec:
 image::./thumbs/argo_vs_k8s.png[,]
 
 .Build my-app docker image
-[source, bash]
+[source,bash]
 ----
 docker build --no-cache --build-arg APP_NAME=my-app -t my-app -f Dockerfile.jvm .
 docker tag my-app douglasdb/my-app

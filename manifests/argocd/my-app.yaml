@@ -5,3 +5,10 @@ metadata:
   namespace: argocd
 spec:
   project: default
+  source:
+    repoURL: https://github.com/DouglasGo8/argocd-apps.git
+    targetRevision: HEAD
+    path: manifests/k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
