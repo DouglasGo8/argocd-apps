@@ -1,0 +1,6 @@
+apiVersion: v2
+name: my-app
+description: Helm chart para Vert.x 5 com Camel 4 no Java 25
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

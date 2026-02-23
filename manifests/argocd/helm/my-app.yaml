@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: my-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/DouglasGo8/argocd-apps.git
+    targetRevision: HEAD
+    path: manifests/helm
+    helm:
+      valueFiles:
+        - values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: k8sinaction
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true

@@ -1,0 +1,2 @@
+env:
+  javaOpts: "-XX:MaxRAMPercentage=75.0"

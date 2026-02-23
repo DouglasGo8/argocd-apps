@@ -169,3 +169,7 @@ ArgoCD has built-in health checks for different K8s resources
 
 . _Degraded_: At least one resource is in a failed or unhealthy state.
 The application might be Synced, but still be Degraded
+
+== Section06
+
+- Working with Helm Charts, ArgoCD as a Helm Charts template engine, and this is the single most important concept to understand. When you manage a Helm Chart with ArgoCD, *it does not run* _helm install_ or _helm upgrade_.
