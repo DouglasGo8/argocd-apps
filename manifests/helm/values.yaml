@@ -17,5 +17,10 @@ resources:
     memory: "256Mi"
     cpu: "100m"
 
+ingress:
+  enabled: false
+  hosts: []
+  tls: false
+
 env:
   javaOpts: "-XX:MaxRAMPercentage=70.0"
