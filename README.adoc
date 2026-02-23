@@ -146,3 +146,26 @@ image::./thumbs/argocd_screen_monitor_v1.png[,]
 image::./thumbs/my-app-svc-exposed.png[,]
 
 Sync status: refers to whether the live state, or the deployed *kubernetes* resources, match the desired state, or the configuration files in the application repo
+
+== Sync and Health Statuses
+
+=== Sync status
+
+- *Sync status* refers to whether the live state, or the deployed k8s resources, match the desired state or config files in app directory, as demonstrated bellow
+
+.Sync and Health Statuses
+image::./thumbs/sync-state.png[,]
+
+. _Synced_: The live state matches the Desired State
+. _OutOfSync_: The live state *does not match* the Desired State, *configuration unit* has happened.
+. _Progressing_: The Application is currently undergoing a sync operation, is temporary
+
+=== Health status
+
+- Refers to whether the live state, or the deployed kubernetes resources, is in a healthy status.
+ArgoCD has built-in health checks for different K8s resources
+
+. _Healthy_: All the resources associated with the application are in good state
+
+. _Degraded_: At least one resource is in a failed or unhealthy state.
+The application might be Synced, but still be Degraded
